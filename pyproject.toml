@@ -1,0 +1,27 @@
+[project]
+name = "mnotfy_mcp_server"
+version = "0.1.0"
+description = "MNotify MCP server: expose MNotify SMS tools over the Model Context Protocol"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "mcp[cli]>=1.1.1",
+    "fastmcp>=2.11.3",
+    "python-dotenv>=1.1.1",
+    "requests>=2.32.4",
+    "httpx>=0.28.1",
+    "openai>=1.100.2",
+]
+
+[project.scripts]
+mnotify_mcp = "mnotify_mcp.server:main"
+mnotify-mcp = "mnotify_mcp.server:main"
+
+[tool.setuptools]
+packages = ["mnotify_mcp"]
+py-modules = ["functions", "context_cache"]
+include-package-data = true
+
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
