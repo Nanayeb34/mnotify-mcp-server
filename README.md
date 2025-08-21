@@ -55,7 +55,8 @@ python -m mnotify_mcp.server
 
 ## MNotify Agent (interactive CLI)
 A local chat agent that can call all MNotify tools directly.
-<img src='images/mnotify_cli_agent.png>
+
+![MNotify CLI Agent](images/mnotify_cli_agent.png)
 
 ### Setup 
 - Create a virtual environment and install dependencies with uv or pip (see above).
