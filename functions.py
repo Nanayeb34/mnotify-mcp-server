@@ -4,8 +4,8 @@ from dotenv import load_dotenv
 import time
 from typing import Optional
 
-# Configure requests with timeout and retry settings
-TIMEOUT = 30  # 30 seconds timeout
+
+TIMEOUT = 30 
 MAX_RETRIES = 3
 
 load_dotenv()
@@ -587,7 +587,7 @@ def send_quick_bulk_sms(recipient: list, sender_id: str, message: str, schedule:
     Args:
         recipient (list): List of phone numbers to send SMS to
         sender_id (str): The registered sender ID
-        message (str): The SMS message content
+        message (str): The SMS message content. Must be 460 characters or less for single SMS
         schedule (bool): Whether to schedule the SMS for later
         schedule_time (str): The scheduled time in YYYY-MM-DD HH:MM format (if schedule is True)
         
@@ -669,7 +669,7 @@ def send_bulk_group_sms(group_id: list, sender_id: str, message: str, schedule: 
     Args:
         group_id (list): List of group IDs to send SMS to
         sender_id (str): The registered sender ID
-        message (str): The SMS message content
+        message (str): The SMS message content. Must be 460 characters or less for single SMS
         schedule (bool): Whether to schedule the SMS for later
         schedule_time (str): The scheduled time in YYYY-MM-DD HH:MM format (if schedule is True)
         
@@ -680,8 +680,8 @@ def send_bulk_group_sms(group_id: list, sender_id: str, message: str, schedule: 
             'code': 'str', # status code
             'message': 'messages sent successfully',
             'summary': {
-                '_id': int,   #  campaign identifier of the sent SMS used to check the delivery report
-                "message_id': str,   #  unique identifier of the sent SMS
+                '_id': int,   #  unique campaign identifier of the sent SMS used to check the delivery report
+                "message_id': str,   #  unique message id of the sent SMS
                 'type': str,   #  type of the sent SMS
                 'total_sent': int,   #  total number of messages sent
                 'contacts': int,   #  total number of contacts sent to
@@ -707,8 +707,8 @@ def send_bulk_group_sms(group_id: list, sender_id: str, message: str, schedule: 
             'code': 'str', # status code
             'message': 'messages scheduled successfully',
             'summary': {
-                '_id': int,   #  campaign identifier of the sent SMS used to check the delivery report
-                "message_id': str,   #  unique identifier of the sent SMS
+                '_id': int,   # unique campaign identifier of the sent SMS used to check the delivery report
+                "message_id': str,   # message id of the sent SMS
                 'type': str,   #  type of the sent SMS
                 'total_sent': int,   #  total number of messages sent
                 'contacts': int,   #  total number of contacts sent to
@@ -1135,7 +1135,7 @@ def validate_sms_request(message: str, recipients=None, groups=None):
     if not message or not message.strip():
         return False, "Message content is required and cannot be empty"
     
-    if len(message) > 160:
+    if len(message) > 460:
         return False, f"Message is too long ({len(message)} characters). SMS messages should be 160 characters or less for single SMS"
     
     if not recipients and not groups:
@@ -1226,143 +1226,7 @@ def safe_api_call(func, *args, **kwargs):
             'data': None
         }
 
-def main():
-    print(periodic_sms_delivery_report(from_date='2025-08-15', to_date='2025-08-15'))
-# id =120949 ,117451
-# campaignid =20250815233545142039V2,20250726233545142039V2
 
-if __name__ == "__main__":
-    main()
+# To DO:
+# 1. Add a function to get number of sent sms, submitted and pending sms
 
-# --------------- Convenience wrappers that resolve human-friendly names ---------------
-
-# def _extract_list_from_container(container, keys):
-#     """
-#     Extract a list value from a dict using the first matching key in keys.
-
-#     Args:
-#         container: Potential dict or list returned by API
-#         keys: Ordered list of keys that may hold the list
-
-#     Returns:
-#         list: Extracted list or empty list if none found
-#     """
-#     if isinstance(container, list):
-#         return container
-#     if isinstance(container, dict):
-#         for key in keys:
-#             value = container.get(key)
-#             if isinstance(value, list):
-#                 return value
-#     return []
-
-# def _extract_id_and_name(item):
-#     """
-#     Extract probable id and name fields from a group-like object.
-
-#     Returns:
-#         tuple: (id_value, name_value) or (None, None)
-#     """
-#     if not isinstance(item, dict):
-#         return None, None
-#     candidate_ids = [item.get(k) for k in ["_id", "id", "group_id", "uuid"]]
-#     candidate_names = [item.get(k) for k in ["name", "group_name", "title", "label"]]
-#     id_value = next((v for v in candidate_ids if isinstance(v, str) and v.strip()), None)
-#     name_value = next((v for v in candidate_names if isinstance(v, str) and v.strip()), None)
-#     return id_value, name_value
-
-# def resolve_group_id(group_name: str):
-#     """
-#     Resolve a group id by group name (case-insensitive, substring match).
-
-#     Args:
-#         group_name (str): Human-friendly name of the group
-
-#     Returns:
-#         dict: If one match, {"success": True, "group_id": str, "group_name": str}
-#               If multiple matches, {"success": False, "ambiguous": True, "matches": [{"id","name"}, ...]}
-#               If none, {"success": False, "error": "..."}
-#     """
-#     data = get_group_list()
-#     if isinstance(data, dict) and data.get("error"):
-#         return {"success": False, "error": data["error"]}
-
-#     groups = _extract_list_from_container(data, ["groups", "data", "result", "items"])
-#     if not groups:
-#         return {"success": False, "error": "No groups found from API"}
-
-#     normalized_query = group_name.lower().strip()
-#     matches = []
-#     for group in groups:
-#         group_id, name_value = _extract_id_and_name(group)
-#         if not group_id or not name_value:
-#             continue
-#         if normalized_query in name_value.lower():
-#             matches.append({"id": group_id, "name": name_value})
-
-#     if not matches:
-#         return {"success": False, "error": f"Group not found for '{group_name}'"}
-#     if len(matches) > 1:
-#         return {"success": False, "ambiguous": True, "matches": matches}
-#     return {"success": True, "group_id": matches[0]["id"], "group_name": matches[0]["name"]}
-
-# def get_group_contacts_by_name(group_name: str):
-#     """
-#     Retrieve contacts for a group resolved by its name.
-
-#     Args:
-#         group_name (str): Human-friendly name of the group
-
-#     Returns:
-#         dict: On success, contacts JSON as returned by API
-#               On failure or ambiguity, a dict with an error/ambiguous description
-#     """
-#     resolution = resolve_group_id(group_name)
-#     if not resolution.get("success"):
-#         return resolution
-#     group_id = resolution["group_id"]
-#     return get_group_contacts(group_id)
-
-# def send_bulk_group_sms_by_group_names(group_names: list, sender_id: str, message: str, schedule: bool, schedule_time: str):
-#     """
-#     Send bulk SMS to groups specified by human-friendly names.
-
-#     Resolves group names to ids internally to avoid the model needing to remember ids.
-
-#     Args:
-#         group_names (list): List of group names
-#         sender_id (str): Registered sender ID
-#         message (str): SMS content
-#         schedule (bool): Whether to schedule
-#         schedule_time (str): When to schedule (YYYY-MM-DD HH:MM) if schedule is True
-
-#     Returns:
-#         dict|tuple: On success, underlying API response and campaign id
-#                     On partial/failed resolution, a dict with details
-#     """
-#     if not isinstance(group_names, list) or not group_names:
-#         return {"success": False, "error": "Please provide a non-empty list of group names"}
-
-#     resolved_ids = []
-#     unresolved = []
-#     ambiguous = {}
-
-#     for name in group_names:
-#         res = resolve_group_id(str(name))
-#         if res.get("success"):
-#             resolved_ids.append(res["group_id"])
-#         elif res.get("ambiguous"):
-#             ambiguous[name] = res.get("matches", [])
-#         else:
-#             unresolved.append(name)
-
-#     if ambiguous or unresolved:
-#         return {
-#             "success": False,
-#             "error": "Unable to resolve all group names",
-#             "unresolved": unresolved,
-#             "ambiguous": ambiguous,
-#             "resolved_ids_so_far": resolved_ids,
-#         }
-
-#     return send_bulk_group_sms(resolved_ids, sender_id, message, schedule, schedule_time)
