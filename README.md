@@ -46,6 +46,8 @@ python -m mnotify_mcp.server
   }
 }
 ```
+Relaunch cursor from the same environment as the virtual environment
+
 - Option B: Manual add in Cursor (Settings → MCP → Add Custom Server → Process)
   - Command: `mnotify_mcp`
   - Args: `server`
@@ -92,7 +94,6 @@ uv run mnotify_agent.py
 ### Validation & guardrails
 - `message` length ≤ 460; `sender_id` length ≤ 11.
 - `schedule=true` requires `schedule_time` (YYYY-MM-DD HH:MM).
-- `recipient`/`recipients` and `group_id`/`groups` accept string, list, or comma-separated values.
 - Optional: `verify_sender=true` performs a best‑effort sender status check before sending.
 
 ### Security
