@@ -1,8 +1,8 @@
 [project]
-name = "mnotfy_mcp_server"
-version = "0.1.0"
+name = "mnotify_mcp_server"
+version = "0.1.1"
 description = "MNotify MCP server: expose MNotify SMS tools over the Model Context Protocol"
-readme = "README.md"
+readme = { file = "PYPI.md", content-type = "text/markdown" }
 requires-python = ">=3.10"
 dependencies = [
     "mcp[cli]>=1.1.1",
