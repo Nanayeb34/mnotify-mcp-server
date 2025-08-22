@@ -4,6 +4,8 @@ Bring MNotify to your AI IDE in one command.
 
 This package exposes the MNotify SMS API as an MCP server so tools like Cursor can securely call real MNotify actions (send SMS, manage contacts/groups/templates, delivery reports) via stdio. This repo also includes a simple interactive MNotify Agent for CLI use. It is based on [Mnotify API v2.0](https://readthedocs.mnotify.com/)
 
+Check out the PyPI MCP package [here](https://pypi.org/project/mnotify-mcp-server/)
+
 ### Requirements
 - Python 3.10+
 - Environment variable: `MNOTIFY_API_KEY`
