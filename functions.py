@@ -512,7 +512,7 @@ def add_contact(group_id: str,  phone: str, first_name: Optional[str] = None, la
     response = requests.post(url, json={"firstname": first_name, "lastname": last_name, "phone": phone, "dob": dob, "email": email, "group_id": group_id})
     
     # Check if response is successful before trying to parse JSON
-    if response.status_code == 200:
+    if response.status_code == 200 or response.status_code == 201:
         data = response.json()
         return data
     else:
@@ -1119,37 +1119,7 @@ def periodic_sms_delivery_report(from_date: str, to_date: str):
     data = response.json()
     return data
 
-# Validation functions for robust error handling
-def validate_sms_request(message: str, recipients=None, groups=None):
-    """
-    Validate SMS request parameters before sending.
-    
-    Args:
-        message (str): The SMS message content
-        recipients (list, optional): List of phone numbers
-        groups (list, optional): List of group IDs
-        
-    Returns:
-        tuple: (is_valid: bool, error_message: str or None)
-    """
-    if not message or not message.strip():
-        return False, "Message content is required and cannot be empty"
-    
-    if len(message) > 460:
-        return False, f"Message is too long ({len(message)} characters). SMS messages should be 160 characters or less for single SMS"
-    
-    if not recipients and not groups:
-        return False, "Please specify either phone numbers or groups to send the message to"
-    
-    if recipients and not isinstance(recipients, list):
-        return False, "Recipients must be provided as a list of phone numbers"
-    
-    if groups and not isinstance(groups, list):
-        return False, "Groups must be provided as a list of group IDs"
-    
-    return True, None
 
-def validate_contact_data(first_name: str, last_name: str, phone: str, email: str = ""):
     """
     Validate contact information before adding/updating.
     
